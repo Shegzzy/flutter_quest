@@ -7,6 +7,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   TimerBloc() : super(TimerInitial()) {
     on<StartTimer>(_onStartTimer);
     on<Tick>(_onTick);
+    on<StopTimer>(_onStopTimer);
   }
 
   StreamSubscription<int>? _tickerSubscription;
@@ -21,6 +22,11 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   void _onTick(Tick event, Emitter<TimerState> emit) {
     emit(TimerRunning(event.seconds));
+  }
+
+  void _onStopTimer(StopTimer event, Emitter<TimerState> emit) {
+    _tickerSubscription?.cancel();
+    emit(TimerStopped());
   }
 
   Stream<int> _tick() async* {
